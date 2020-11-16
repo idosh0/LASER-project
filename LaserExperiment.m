@@ -117,17 +117,19 @@ classdef LaserExperiment < handle
                 x_position(s,:)=All_TC(time_pos*s,1:5);
                 subplot(n,1,s)
                 plot( x_dis,x_position(s,:));
+                 hold on ; grid on ; xlabel('t [sec]');ylabel('T [0C]');
                 legend_str{s} = ['t = ' num2str(RunTime(time_pos*s)) '[sec]'];
             end
             figure;
             plot(x_dis, x_position')
             opengl software
             legend(legend_str)
+            opengl hardware
+            hold on ; grid on ; xlabel('t [sec]');ylabel('T [0C]');
         end
         
          function plotTCPmovieOverTime(obj)
              
-            
             All_TC = obj.TCData;%get the temperatore valiue
             RunTime=obj.SensorTime;%t axis
             RunTime=RunTime-RunTime(1);%start from 0 point
@@ -136,17 +138,14 @@ classdef LaserExperiment < handle
             %time_pos= round((end_line/ n))-1;
             distance=obj.TCspacing ;
             x_dis=0: distance: distance*obj.TCActiveTCNum-1 ;
-            figure;
+            h = figure('Name','TCmovie');
             for s=1: end_line
                 x_position(s,:)=All_TC(s,1:5);
-               
-                plot( x_dis,x_position(s,:));
+               figure(h);
+                plot(x_dis,x_position(s,:),'-o');
                 hold on ;
-                 plot( x_dis,x_position(s,:),'o');
-                xlim([0 60]);
-                ylim([0 350]);
-                hold on ;
-                pause(0.005);
+                xlim([0 60]);ylim([0 350]);grid on ;xlabel('t [sec]');ylabel('T [0C]');
+                pause(0.00005);
                
                 hold off ;
                 
