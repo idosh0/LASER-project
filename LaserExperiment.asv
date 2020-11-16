@@ -29,8 +29,11 @@ classdef LaserExperiment < handle
     properties (Access = private)
         DataHederSize = 8;
     end
+<<<<<<< HEAD
     
  
+=======
+>>>>>>> c5d25a907d1217f8f527e255f4fec0f4c5cc7d4b
     %% ===================handle data loading======================
     methods %handle data loading
         function obj = LaserExperiment(number, path)
@@ -80,7 +83,11 @@ classdef LaserExperiment < handle
             All_TC = obj.TCData;
             RunTime=obj.SensorTime;
             RunTime=RunTime-RunTime(1);
+<<<<<<< HEAD
             figure('Name', 'all TC plot');
+=======
+            figure;
+>>>>>>> c5d25a907d1217f8f527e255f4fec0f4c5cc7d4b
             plot( RunTime, All_TC(:,1:obj. TCActiveTCNum));
             xlabel('time[sec]');
             ylabel('Temperator[c]');
@@ -91,6 +98,7 @@ classdef LaserExperiment < handle
             All_TC = obj.TCData;
             RunTime=obj.SensorTime;
             RunTime=RunTime-RunTime(1);
+<<<<<<< HEAD
             
             TC_def =diff(All_TC);
             figure;
@@ -101,13 +109,22 @@ classdef LaserExperiment < handle
             ylabel('dT [0c]');
             
           
+=======
+            figure;
+            TC_def =diff(All_TC);
+            plot( RunTime(1:end-1), TC_def(:,1:obj. TCActiveTCNum));
+>>>>>>> c5d25a907d1217f8f527e255f4fec0f4c5cc7d4b
         end
         
         function plotTCProfileOverTime(obj)
             All_TC = obj.TCData;
             RunTime=obj.SensorTime;
             RunTime=RunTime-RunTime(1);
+<<<<<<< HEAD
             n=5 ;
+=======
+            n=10 ;
+>>>>>>> c5d25a907d1217f8f527e255f4fec0f4c5cc7d4b
             end_line=size(RunTime,1) ;
             time_pos= round((end_line/ n))-1;
             distance=obj.TCspacing ;
@@ -115,6 +132,7 @@ classdef LaserExperiment < handle
             figure;
             for s=1: n
                 x_position(s,:)=All_TC(time_pos*s,1:5);
+<<<<<<< HEAD
                 subplot(n,1,s)
                 plot( x_dis,x_position(s,:));
                 legend_str{s} = ['t = ' num2str(RunTime(time_pos*s)) '[sec]'];
@@ -150,6 +168,10 @@ classdef LaserExperiment < handle
                
                 hold off ;
                 
+=======
+                subplot(10,1,s)
+                plot( x_dis,x_position(s,:));
+>>>>>>> c5d25a907d1217f8f527e255f4fec0f4c5cc7d4b
             end
             figure;
             plot(x_dis, x_position)
@@ -168,8 +190,32 @@ classdef LaserExperiment < handle
     end
     %% ===================data validation functions======================
     methods
+<<<<<<< HEAD
         function CheckClockValid(obj)
             %#TO_DO
+=======
+        function CheckClockValidSensor(obj)
+            t = obj.SensorTime;
+            t_diff_sensor = diff(t);
+            figure('Name','SensorClockDiff');
+            plot(t(1:end-1),t_diff_sensor);
+            xlabel('t [sec]','Interpreter','tex')
+            ylabel('^{dt}/_{dSample}')
+            diff_mean = mean(t_diff_sensor);
+            diff_std = std(t_diff_sensor);
+            dim = [.2 .5 .3 .3];
+            str ={['clock diff mean =' num2str(diff_mean)], '\n clock diff std =' num2str(diff_mean)];
+            annotation('textbox',dim,'String',str,'FitBoxToText','on');
+            
+        end
+        function CheckClockValidVideo(obj)
+            t = obj.VideoTime;
+            t_diff_sensor = diff(t);
+            figure('Name','VideoClockDiff');
+            plot(t(1:end-1),t_diff_sensor);
+            xlabel('t [sec]','Interpreter','tex')
+            ylabel('^{dt}/_{dSample}')
+>>>>>>> c5d25a907d1217f8f527e255f4fec0f4c5cc7d4b
         end
     end
     %% ===================class static methods======================

@@ -91,7 +91,7 @@ classdef LaserExperiment < handle
             All_TC = obj.TCData;
             RunTime=obj.SensorTime;
             RunTime=RunTime-RunTime(1);
-            
+            figure;
             TC_def =diff(All_TC);
             figure;
             hold on ;
@@ -168,8 +168,32 @@ classdef LaserExperiment < handle
     end
     %% ===================data validation functions======================
     methods
-        function CheckClockValid(obj)
-            %#TO_DO
+        function CheckClockValidSensor(obj)
+            t = obj.SensorTime;
+            t_diff_sensor = diff(t);
+            figure('Name','SensorClockDiff');
+            plot(t(1:end-1),t_diff_sensor);
+            xlabel('t [sec]','Interpreter','tex')
+            ylabel('^{dt}/_{dSample}')
+            diff_mean = mean(t_diff_sensor);
+            diff_std = std(t_diff_sensor);
+            dim = [0.5,0.8,0.3,0.1];
+            str ={['Clock diff mean =' num2str(diff_mean)], ['Clock diff std =' num2str(diff_std)], ['Average frequency =' num2str(1/diff_mean)]};
+            annotation('textbox',dim,'String',str,'FitBoxToText','on');
+            
+        end
+        function CheckClockValidVideo(obj)
+            t = obj.VideoTime;
+            t_diff_sensor = diff(t);
+            figure('Name','VideoClockDiff');
+            plot(t(1:end-1),t_diff_sensor);
+            xlabel('t [sec]','Interpreter','tex')
+            ylabel('^{dt}/_{dSample}')
+            diff_mean = mean(t_diff_sensor);
+            diff_std = std(t_diff_sensor);
+            dim = [0.5,0.8,0.3,0.1];
+            str ={['clock diff mean =' num2str(diff_mean)], ['clock diff std =' num2str(diff_std)], ['Average frequency =' num2str(1/diff_mean)]};
+            annotation('textbox',dim,'String',str,'FitBoxToText','on');
         end
     end
     %% ===================class static methods======================
