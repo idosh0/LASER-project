@@ -144,9 +144,9 @@ classdef LaserExperiment < handle
                 hold on ;
                  plot( x_dis,x_position(s,:),'o');
                 xlim([0 60]);
-                ylim([0 350]);
+                ylim
                 hold on ;
-                pause(0.005);
+                pause(0.05);
                
                 hold off ;
                 
