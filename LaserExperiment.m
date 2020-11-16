@@ -13,28 +13,33 @@ classdef LaserExperiment < handle
         LaserVoltage
         Duration
         BeamDiameter
-        ActiveTCNum
+        TCActiveTCNum
+        TCData
+        TCspacing
+        
         SensorTime
-        TCDataexp1
         FrontDio
         RearDio
+        
         VideoTime
         VideoFrame
+        
     end
     
     properties (Access = private)
         DataHederSize = 8;
     end
-    
-    methods
+    %% ===================handle data loading======================
+    methods %handle data loading
         function obj = LaserExperiment(number, path)
             obj.ExpNumber = number;
             obj.FolderPath = path;
         end
         
+        
         function LoadSensorData(obj)
             filename = [obj.FolderPath '\' 'SensorData-' num2str(obj.ExpNumber,'%012.f') '.csv'];
-            %% save header
+            % save header
             RangeStr = ['A1:B' num2str(obj.DataHederSize)];
             HeaderData = readcell(filename,'Range',RangeStr);
             obj.Date = HeaderData{1,2};
@@ -45,7 +50,7 @@ classdef LaserExperiment < handle
             obj.LaserVoltage = HeaderData{6,2};
             obj.Duration = HeaderData{7,2};
             obj.BeamDiameter = HeaderData{8,2};
-            %% save reads
+            % save reads
             RangeStr = ['A' num2str(obj.DataHederSize+2)];
             ReadsData = readmatrix(filename,'Range',RangeStr);
             obj.SensorTime = ReadsData(:,1);
@@ -61,49 +66,71 @@ classdef LaserExperiment < handle
             obj.VideoTime = Videomat(:,2);
             obj.VideoFrame = Videomat(:,1);
         end
-        function CheckClockValid(obj)
+    end
+    
+    %% ===================handle TC ploting======================
+    methods
+        function SetTCParam(obj, spacing, TCnumber)
+            obj.TCActiveTCNum = TCnumber;
+            obj.TCspacing = spacing;
+        end
+        function plotTC(obj)
+            All_TC = obj.TCData;
+            RunTime=obj.SensorTime;
+            RunTime=RunTime-RunTime(1);
+            figure;
+            plot( RunTime, All_TC(:,1:obj. TCActiveTCNum));
+            xlabel('time[sec]');
+            ylabel('Temperator[c]');
+            grid on ;
             
         end
-        function GrayVideoParsing(obj)
-            FileName = ['\BW-' num2str(obj.ExpNumber,'%012.f') '.AVI'];
-            disp(' Dont worry be happy.... it will take some time    :o)  ....  ')
-            LaserExperiment.aviread(fullfile(obj.FolderPath,FileName));
-        end
-        
-        function plotTC(obj)
+        function plotTCtimediff(obj)
             All_TC = obj.TCData;
             RunTime=obj.SensorTime;
             RunTime=RunTime-RunTime(1);
             
             TC_def =diff(All_TC);
-            
-            figure;
-            plot( RunTime, All_TC(:,1:5));
-            xlabel('time[sec]');
-            ylabel('Temperator[c]');
-            grid on ;
-            figure;
-            plot( RunTime(1:end-1), TC_def(:,1:5));
-            
-            
+            plot( RunTime(1:end-1), TC_def(:,1:obj. TCActiveTCNum));
+        end
+        
+        function plotTCProfileOverTime(obj)
+            All_TC = obj.TCData;
+            RunTime=obj.SensorTime;
+            RunTime=RunTime-RunTime(1);
             n=10 ;
             end_line=size(RunTime,1) ;
             time_pos= round((end_line/ n))-1;
-            
-            %don't forget to delete !!!
-            obj. ActiveTCNum=5 ;
-            
-            distance=15 ;
-            x_dis=0: distance: distance*obj. ActiveTCNum-1 ;
+            distance=obj.TCspacing ;
+            x_dis=0: distance: distance*obj.TCActiveTCNum-1 ;
             figure;
             for s=1: n
                 x_position(s,:)=All_TC(time_pos*s,1:5);
                 subplot(10,1,s)
                 plot( x_dis,x_position(s,:));
             end
+            figure;
+            plot(x_dis, x_position)
+        end
+        
+    end
+    %% ===================handle video processing======================
+    methods
+        
+        function GrayVideoParsing(obj)
+            FileName = ['\BW-' num2str(obj.ExpNumber,'%012.f') '.AVI'];
+            disp(' Dont worry be happy.... it will take some time    :o)  ....  ')
+            LaserExperiment.aviread(fullfile(obj.FolderPath,FileName));
+        end
+        
+    end
+    %% ===================data validation functions======================
+    methods
+        function CheckClockValid(obj)
+            %#TO_DO
         end
     end
-    
+    %% ===================class static methods======================
     methods(Static)
         function aviread(f)
             % Construct a multimedia reader object associated with file
