@@ -16,7 +16,7 @@ classdef mySteeper < handle
     end
     
     methods
-        function obj = mystepper(obj,a,StepPin,DirPin,XperStep)
+        function obj = mySteeper(a,StepPin,DirPin,XperStep,tPulse)
             %bulder mathod for my step
             %   a - arduino object
             %   StepPin - the pin that connected to the PUL in the driver ('D11')
@@ -26,6 +26,7 @@ classdef mySteeper < handle
             obj.DirPin = DirPin;
             obj.StepPin = StepPin;
             obj.XperStep = XperStep;
+            obj.tPulse = tPulse;
         end
         
         function Move(obj,X,V,D)
@@ -36,11 +37,12 @@ classdef mySteeper < handle
             
             writeDigitalPin(obj.a, obj.DirPin, D);
             N = X / obj.XperStep;
-            deltaT = X /(N*V) - obj.tPulse;
+%             deltaT = X /(N*V) - obj.tPulse;
+            deltaT = X /(2*(N*V));
             
             for i = 1:N
               writeDigitalPin(obj.a, obj.StepPin, 1);
-              pause(obj.tPulse);
+              pause(deltaT);
               writeDigitalPin(obj.a, obj.StepPin, 0);
               pause(deltaT);
             end
